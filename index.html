@@ -33,7 +33,7 @@
   <script>
     // Для локального теста API работает на этом же компьютере.
     // Когда настроим HTTPS-туннель, заменим адрес на публичный URL.
-    const API_BASE = "http://localhost:8080";
+    const API_BASE = "http://127.0.0.1:8080";
 
     fetch(`${API_BASE}/visit`, { cache: "no-store" })
       .then(response => {
