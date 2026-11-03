@@ -16,17 +16,39 @@
       color: #7c2d12;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+    main { text-align: center; }
     h1 {
       margin: 0;
-      text-align: center;
       font-size: clamp(2.5rem, 9vw, 6rem);
       letter-spacing: -0.04em;
     }
+    #counter-status { margin-top: 18px; color: #9a3412; font-size: 0.95rem; }
   </style>
 </head>
 <body>
   <main>
     <h1>хаха сасантыч!</h1>
+    <p id="counter-status">Считаем посещения…</p>
   </main>
+  <script>
+    // Для локального теста API работает на этом же компьютере.
+    // Когда настроим HTTPS-туннель, заменим адрес на публичный URL.
+    const API_BASE = "http://localhost:8080";
+
+    fetch(`${API_BASE}/visit`, { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        document.querySelector("#counter-status").textContent =
+          `Посещений: ${data.visits}`;
+      })
+      .catch(error => {
+        console.error("Не удалось связаться с сервером:", error);
+        document.querySelector("#counter-status").textContent =
+          "Сервер пока недоступен";
+      });
+  </script>
 </body>
 </html>
