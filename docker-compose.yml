@@ -1,37 +1,13 @@
 services:
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: santa
-      POSTGRES_USER: santa
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-    volumes:
-      - santa_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U santa -d santa"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-    networks:
-      - backend
   api:
     build:
       context: ./backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgres://santa:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/santa?sslmode=disable
       ADDR: :8080
+      LOG_FILE: /data/visits.jsonl
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-https://hordevcom.github.io}
-    depends_on:
-      db:
-        condition: service_healthy
     ports:
       - "127.0.0.1:8080:8080"
-    networks:
-      - backend
-volumes:
-  santa_pgdata:
-networks:
-  backend:
-    internal: true
+    volumes:
+      - ./data:/data
